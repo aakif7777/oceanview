@@ -33,7 +33,7 @@
         
         .logo {
             font-size: 60px;
-            margin-bottom: 15px;
+            margin-bottom: 10px;
         }
         
         h1 {
@@ -70,7 +70,6 @@
             border-radius: 8px;
             font-size: 14px;
             transition: border-color 0.3s;
-            font-family: inherit;
         }
         
         input[type="text"]:focus, 
@@ -102,20 +101,12 @@
             color: #e74c3c;
             margin-top: 15px;
             font-size: 14px;
-            display: none;
         }
         
         .footer {
             margin-top: 25px;
             color: #999;
             font-size: 12px;
-        }
-        
-        /* Error message from server */
-        .server-error {
-            color: #e74c3c;
-            margin-top: 15px;
-            font-size: 14px;
         }
     </style>
 </head>
@@ -126,7 +117,7 @@
         <h1>Ocean View Resort</h1>
         <p class="subtitle">Room Reservation System</p>
         
-        <form action="${pageContext.request.contextPath}/login" method="POST">
+        <form action="login" method="POST">
             <div class="form-group">
                 <label for="username">Username</label>
                 <input type="text" id="username" name="username" 
@@ -146,7 +137,7 @@
                 String error = (String) request.getAttribute("error");
                 if (error != null) {
             %>
-                <p class="server-error">❌ <%= error %></p>
+                <p class="error">❌ <%= error %></p>
             <%
                 }
             %>

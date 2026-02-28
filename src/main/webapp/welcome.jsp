@@ -1,10 +1,19 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page import="com.oceanview.util.StatisticsService" %>
 <%
     // Check if user is logged in
     if (session.getAttribute("username") == null) {
         response.sendRedirect("index.jsp");
         return;
     }
+    
+    // Fetch real statistics from database - USE CORRECT METHOD NAMES
+    int availableRooms = StatisticsService.getAvailableRoomsCount();      // FIXED
+    int occupiedRooms = StatisticsService.getOccupiedRoomsCount();        // FIXED
+    int todayCheckIns = StatisticsService.getTodayCheckIns();             // OK
+    int todayCheckOuts = StatisticsService.getTodayCheckOuts();           // OK
+    int totalGuests = StatisticsService.getTotalGuests();                 // OK
+    int totalReservations = StatisticsService.getActiveReservations();    // FIXED
 %>
 <!DOCTYPE html>
 <html>
@@ -22,15 +31,14 @@
         
         body {
             font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8ec 100%);
-            min-height: 100vh;
+            background: #f5f7fa;
         }
         
-        /* Elegant Navigation */
+        /* Navigation */
         .navbar {
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
-            padding: 20px 40px;
+            padding: 15px 40px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -41,19 +49,19 @@
         }
         
         .nav-brand {
-            font-size: 26px;
+            font-size: 24px;
             font-weight: 700;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
         }
         
         .nav-brand span:first-child {
-            font-size: 32px;
             -webkit-text-fill-color: initial;
+            font-size: 28px;
         }
         
         .nav-links {
@@ -66,10 +74,19 @@
             text-decoration: none;
             padding: 10px 20px;
             border-radius: 25px;
-            transition: all 0.3s ease;
+            transition: all 0.3s;
             font-size: 14px;
             font-weight: 500;
         }
+        
+        .nav-links a[href="logout"] {
+    background: #dc2626;
+    color: white;
+}
+
+.nav-links a[href="logout"]:hover {
+    background: #b91c1c;
+}
         
         .nav-links a:hover {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -85,7 +102,7 @@
             padding: 0 40px;
         }
         
-        /* Elegant Welcome Card */
+        /* Welcome Card */
         .welcome-card {
             background: white;
             padding: 40px;
@@ -108,7 +125,7 @@
         
         .welcome-card h1 {
             color: #2d3748;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
             font-size: 32px;
             font-weight: 600;
         }
@@ -116,10 +133,9 @@
         .welcome-card p {
             color: #718096;
             font-size: 16px;
-            line-height: 1.6;
         }
         
-        /* Elegant Stats Grid */
+        /* Stats Grid */
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -134,7 +150,6 @@
             box-shadow: 0 5px 20px rgba(0,0,0,0.06);
             text-align: center;
             transition: all 0.3s ease;
-            position: relative;
         }
         
         .stat-card:hover {
@@ -173,7 +188,41 @@
             font-weight: 500;
         }
         
-        /* Elegant Menu Grid */
+        /* Secondary Stats */
+        .secondary-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+        
+        .secondary-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .secondary-info h3 {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-bottom: 5px;
+        }
+        
+        .secondary-info .number {
+            font-size: 32px;
+            font-weight: 700;
+        }
+        
+        .secondary-icon {
+            font-size: 40px;
+            opacity: 0.3;
+        }
+        
+        /* Menu Grid */
         .menu-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -208,14 +257,13 @@
             justify-content: center;
             margin: 0 auto 25px;
             font-size: 36px;
-            transition: transform 0.3s ease;
+            transition: transform 0.3s;
         }
         
         .menu-card:hover .menu-icon {
             transform: scale(1.1) rotate(5deg);
         }
         
-        /* Different colors for each card */
         .menu-card:nth-child(1) .menu-icon { 
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
@@ -254,15 +302,6 @@
             line-height: 1.6;
         }
         
-        /* Special styling for logout */
-        .menu-card.logout {
-            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
-        }
-        
-        .menu-card.logout h3 {
-            color: #c53030;
-        }
-        
         /* Responsive */
         @media (max-width: 1024px) {
             .stats-grid {
@@ -283,29 +322,27 @@
             .container {
                 padding: 0 20px;
             }
-            .stats-grid, .menu-grid {
+            .stats-grid, .menu-grid, .secondary-stats {
                 grid-template-columns: 1fr;
-            }
-            .welcome-card h1 {
-                font-size: 24px;
             }
         }
     </style>
 </head>
 <body>
 
-    <!-- Navigation - Logout Removed -->
+    <!-- Navigation -->
     <nav class="navbar">
         <div class="nav-brand">
             <span>🌊</span>
             <span>Ocean View Resort</span>
         </div>
         <div class="nav-links">
-            <a href="welcome.jsp">🏠 Home</a>
-            <a href="addguest.jsp">👥 Guests</a>
+            <a href="addguest.jsp">👥 Add Guest</a>
             <a href="viewguests.jsp">📋 View Guests</a>
-            <a href="#">🛏️ Rooms</a>
-            <a href="#">📅 Reservations</a>
+            <a href="addroom.jsp">Add Room</a>
+            <a href="addreservation.jsp">🛏️ New Reservation</a>
+            <a href="calculatebill.jsp">Calculate Bill</a>
+            <a href="logout">🚪 Logout</a>
         </div>
     </nav>
 
@@ -318,39 +355,92 @@
             <p>Manage your room reservations efficiently. Here's what's happening today at Ocean View Resort.</p>
         </div>
         
-        <!-- Statistics -->
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-icon">🚪</div>
-                <div class="stat-number">12</div>
-                <div class="stat-label">Available Rooms</div>
+        <!-- Main Statistics -->
+<%@ page import="com.oceanview.util.StatisticsService" %>
+
+<!-- Statistics -->
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-icon">🚪</div>
+        <div class="stat-number"><%= StatisticsService.getAvailableRoomsCount() %></div>
+        <div class="stat-label">Available Rooms</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon">🛏️</div>
+        <div class="stat-number"><%= StatisticsService.getOccupiedRoomsCount() %></div>
+        <div class="stat-label">Currently Occupied</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon">📅</div>
+        <div class="stat-number"><%= StatisticsService.getActiveReservations() %></div>
+        <div class="stat-label">Active Reservations</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon">👥</div>
+        <div class="stat-number"><%= StatisticsService.getTotalGuests() %></div>
+        <div class="stat-label">Total Guests</div>
+    </div>
+</div>
+<!-- Today's Activity -->
+<div class="secondary-stats">
+    <div class="secondary-card">
+        <div class="secondary-info">
+            <h3>Check-ins Today</h3>
+            <div class="number"><%= todayCheckIns %></div>
+        </div>
+        <div class="secondary-icon">📥</div>
+    </div>
+    <div class="secondary-card">
+        <div class="secondary-info">
+            <h3>Check-outs Today</h3>
+            <div class="number"><%= todayCheckOuts %></div>
+        </div>
+        <div class="secondary-icon">📤</div>
+    </div>
+    <div class="secondary-card">
+        <div class="secondary-info">
+            <h3>Upcoming (7 days)</h3>
+            <div class="number"><%= StatisticsService.getTodayCheckIns() %></div>
+        </div>
+        <div class="secondary-icon">📆</div>
+    </div>
+    <div class="secondary-card">
+        <div class="secondary-info">
+            <h3>Total Reservations</h3>
+            <div class="number"><%= totalReservations %></div>
+        </div>
+        <div class="secondary-icon">📝</div>
+    </div>
+</div>
+        
+        <!-- Secondary Statistics -->
+        <div class="secondary-stats">
+            <div class="secondary-card">
+                <div class="secondary-info">
+                    <h3>Total Guests</h3>
+                    <div class="number"><%= totalGuests %></div>
+                </div>
+                <div class="secondary-icon">👥</div>
             </div>
-            <div class="stat-card">
-                <div class="stat-icon">🛏️</div>
-                <div class="stat-number">8</div>
-                <div class="stat-label">Occupied</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon">📥</div>
-                <div class="stat-number">5</div>
-                <div class="stat-label">Check-ins</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon">📤</div>
-                <div class="stat-number">3</div>
-                <div class="stat-label">Check-outs</div>
+            
+            <div class="secondary-card">
+                <div class="secondary-info">
+                    <h3>Total Reservations</h3>
+                    <div class="number"><%= totalReservations %></div>
+                </div>
+                <div class="secondary-icon">📅</div>
             </div>
         </div>
         
         <!-- Menu -->
         <div class="menu-grid">
-            <a href="addguest.jsp" class="menu-card">
+            <a href="addreservation.jsp" class="menu-card">
                 <div class="menu-icon">➕</div>
                 <h3>New Reservation</h3>
                 <p>Create a new room booking for guests with all details</p>
             </a>
             
-            <a href="#" class="menu-card">
+            <a href="viewreservations.jsp" class="menu-card">
                 <div class="menu-icon">📋</div>
                 <h3>View Reservations</h3>
                 <p>See all current, upcoming and past bookings</p>
@@ -368,17 +458,20 @@
                 <p>Check availability and manage room assignments</p>
             </a>
             
-            <a href="#" class="menu-card" onclick="alert('Help Center\n\n1. To add a guest: Click Guest Management\n2. To view guests: Click View Guests\n3. For support contact: admin@oceanview.com')">
+                      <a href="calculatebill.jsp" class="menu-card">
+    <div class="menu-icon">💰</div>
+    <h3>Calculate Bill</h3>
+    <p>Calculate and print guest bills</p>
+</a>
+     
+            
+            <a href="#" class="menu-card" onclick="alert('Help Center\n\n1. Add Guest: Create new guest profile\n2. New Reservation: Book room for guest\n3. View Guests: See all registered guests\n4. View Reservations: See all bookings\n\nContact: admin@oceanview.com')">
                 <div class="menu-icon">❓</div>
                 <h3>Help Center</h3>
                 <p>Get help and guidance on using the system</p>
             </a>
             
-            <a href="logout" class="menu-card logout">
-                <div class="menu-icon">🚪</div>
-                <h3>Logout</h3>
-                <p>Sign out of the system securely</p>
-            </a>
+       
         </div>
         
     </div>
