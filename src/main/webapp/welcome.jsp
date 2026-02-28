@@ -349,7 +349,8 @@
     <!-- Main Content -->
     <div class="container">
         
-        <!-- Welcome -->
+       
+        <!-- Welcome -->>
         <div class="welcome-card">
             <h1>Welcome back, <%= session.getAttribute("fullName") %>! 👋</h1>
             <p>Manage your room reservations efficiently. Here's what's happening today at Ocean View Resort.</p>
