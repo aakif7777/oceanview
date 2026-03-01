@@ -1,3 +1,5 @@
+[![Maven CI/CD](https://github.com/aakif7777/oceanview/actions/workflows/maven.yml/badge.svg)](https://github.com/aakif7777/oceanview/actions/workflows/maven.yml)
+
 # 🏨 Ocean View Resort Reservation System
 
 A web-based Room Reservation System developed using Java (Servlet & JSP) following the DAO design pattern. This system allows efficient management of hotel operations including room booking, billing, and administration.
